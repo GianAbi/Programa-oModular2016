@@ -33,7 +33,7 @@ public class DescompactadorUnzip {
 //        DescompactadorUnzip unzip = new DescompactadorUnzip(zipFilePath, destDir);
 //    }
     
-    public DescompactadorUnzip(String zipFilePath, String destDir) {
+    public DescompactadorUnzip(String zipFile, String destDir) {
         
         File dir = new File(destDir);
         
@@ -44,22 +44,22 @@ public class DescompactadorUnzip {
         
         byte[] buffer = new byte[1024];
         try {
-            fis = new FileInputStream(zipFilePath);
             
-            ZipInputStream zis = new ZipInputStream(fis);
+            ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile));
             ZipEntry ze = zis.getNextEntry();
             while(ze != null){
                 
                 String fileName = ze.getName();
                 File newFile = new File(destDir + File.separator + fileName);
-                System.out.println("Unzipping to "+newFile.getAbsolutePath());
+                
+//                System.out.println("Unzipping to "+newFile.getAbsolutePath());
                 //create directories for sub directories in zip
-                new File(newFile.getParent()).mkdirs();
+//                new File(newFile.getParent()).mkdirs();
                 
                 FileOutputStream fos = new FileOutputStream(newFile);
                 int len;
                 while ((len = zis.read(buffer)) > 0) {
-                fos.write(buffer, 0, len);
+                    fos.write(buffer, 0, len);
                 }
                 fos.close();
                 //close this ZipEntry
@@ -71,7 +71,6 @@ public class DescompactadorUnzip {
             //close last ZipEntry
             zis.closeEntry();
             zis.close();
-            fis.close();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ZipError z){
