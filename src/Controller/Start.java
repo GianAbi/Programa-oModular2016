@@ -5,10 +5,12 @@
  */
 package Controller;
 
-import Acessórios.DownloadFiles;
-import Acessórios.DownloadFiles;
-import Model.ProgramaPosGraduacao;
+import Acessórios.Download;
+import Acessórios.Download;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -16,7 +18,7 @@ import java.io.IOException;
  */
 public class Start {
     
-    public static void main(String args[]) throws IOException{
+    public static void main(String args[]) throws IOException, MalformedURLException, SAXException, ParserConfigurationException{
         
 //        if (args.length < 3){
 //            System.out.println("Parâmetro insuficiente");
@@ -26,9 +28,9 @@ public class Start {
         System.out.println(args.length);
         
         ProgramaPosGraduacao ppg = new ProgramaPosGraduacao(args[0]);
-        DownloadFiles download = new DownloadFiles(args[0], ppg.listaProfessores());
+        //Download download = new Download(args[0], ppg.listaProfessores());
         
-        return;
+        //return;
         
     }
 }

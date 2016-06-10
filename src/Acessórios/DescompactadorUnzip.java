@@ -33,16 +33,14 @@ public class DescompactadorUnzip {
 //        DescompactadorUnzip unzip = new DescompactadorUnzip(zipFilePath, destDir);
 //    }
     
-    public DescompactadorUnzip(String zipFile, String destDir) {
+    public DescompactadorUnzip(String zipFile, String folderProf) {
         
-        File dir = new File(destDir);
+        File dir = new File("Curriculos"+ File.separator +folderProf);
         
         if(!dir.exists())
             dir.mkdirs();
         
-        FileInputStream fis;
-        
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[2048];
         try {
             
             ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile));
@@ -50,11 +48,11 @@ public class DescompactadorUnzip {
             while(ze != null){
                 
                 String fileName = ze.getName();
-                File newFile = new File(destDir + File.separator + fileName);
+                File newFile = new File(dir.getPath() + File.separator + fileName);
                 
-//                System.out.println("Unzipping to "+newFile.getAbsolutePath());
+                System.out.println("Unzipping to "+newFile.getAbsolutePath());
                 //create directories for sub directories in zip
-//                new File(newFile.getParent()).mkdirs();
+                //new File(newFile.getPath()).mkdir();
                 
                 FileOutputStream fos = new FileOutputStream(newFile);
                 int len;
@@ -62,15 +60,16 @@ public class DescompactadorUnzip {
                     fos.write(buffer, 0, len);
                 }
                 fos.close();
-                //close this ZipEntry
-                zis.closeEntry();
                 ze = zis.getNextEntry();
                 
-                CurriculoMining curriculo = new CurriculoMining(destDir + File.separator + fileName);
+                //CurriculoMining curriculo = new CurriculoMining(destDir);// + File.separator + fileName);
             }
             //close last ZipEntry
             zis.closeEntry();
             zis.close();
+            
+            File file = new File(zipFile);
+            file.deleteOnExit();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ZipError z){

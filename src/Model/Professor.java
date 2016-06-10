@@ -28,7 +28,7 @@ public class Professor {
     
     
 
-    public Professor(String nome, String cod, String linhaPesquisa){//, Curriculo curriculo, String instituicao, String graduacao, String formacao, List<Artigo> artigos) {
+    public Professor(String nome, String cod){//, Curriculo curriculo, String instituicao, String graduacao, String formacao, List<Artigo> artigos) {
         this.nome = nome;
         this.cod = cod;
         this.linhaPesquisa = linhaPesquisa;
