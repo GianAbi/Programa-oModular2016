@@ -27,7 +27,11 @@ public class Start {
         
         System.out.println(args.length);
         
+        long start = System.currentTimeMillis();
         ProgramaPosGraduacao ppg = new ProgramaPosGraduacao(args[0]);
+        long end = System.currentTimeMillis();
+        
+        System.out.println((end-start)/1000 + "seg");
         //Download download = new Download(args[0], ppg.listaProfessores());
         
         //return;

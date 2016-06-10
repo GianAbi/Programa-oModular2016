@@ -5,12 +5,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.FileSystemException;
-import java.nio.file.FileSystemNotFoundException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipError;
 import java.util.zip.ZipInputStream;
-import javax.annotation.processing.FilerException;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -71,9 +68,7 @@ public class DescompactadorUnzip {
             File file = new File(zipFile);
             file.deleteOnExit();
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ZipError z){
-            System.err.println("Erro ao carregar arquivo .ZIP");
+            System.err.println("Erro ao descompactar arquivo: " + zipFile);
         }
          
     }

@@ -32,13 +32,16 @@ import org.xml.sax.SAXException;
  */
 public class ProgramaPosGraduacao {
     
-    List<Professor> professores;
-    List<Pesquisa> pesquisas;
+    private final String URL_QUALIS = "https://s3.amazonaws.com/posgraduacao/qualis.xml";
+    private final String URL_CONTENTS = "https://s3.amazonaws.com/posgraduacao/[nome_do_programa]/contents.xml";
     
-    List<Element> linhaPesqElements;
-    List<Element> profElements;
+    private List<Professor> professores;
+    private List<Pesquisa> pesquisas;
     
-    ElementXML captura;
+    private List<Element> linhaPesqElements;
+    private List<Element> profElements;
+    
+    private ElementXML captura;
 //    Date ultimaAval;
 //    Date primAval;
     
@@ -51,15 +54,28 @@ public class ProgramaPosGraduacao {
         
         captura = new ElementXML();
         
-        File file = new File("contents.xml");
-        if(!file.exists()){
-            
-            URL oURL = new URL("https://s3.amazonaws.com/posgraduacao/" + programaPos + "/contents.xml");
-            Download downloadContents = new Download(oURL);
+        carregaContents(programaPos);
+        
+        checkCurriculos(programaPos);
+        
+        File fileQualis = new File("qualis.xml");
+        if(!fileQualis.exists())
+            new Download(new URL(URL_QUALIS));
+        
+        
+        
+    }
+    
+    private void carregaContents(String programaPos) throws ParserConfigurationException, IOException, SAXException{
+        
+        File fileContents = new File("contents.xml");
+        if(!fileContents.exists()){
+            URL oURL = new URL(URL_CONTENTS.replace("[nome_do_programa]", programaPos));
+            new Download(oURL);
         }
         
-        linhaPesqElements = captura.getElementXML(file.getAbsolutePath(), "linha");
-        profElements = captura.getElementXML(file.getAbsolutePath(), "professor");
+        linhaPesqElements = captura.getElementXML(fileContents.getAbsolutePath(), "linha");
+        profElements = captura.getElementXML(fileContents.getAbsolutePath(), "professor");
         
         for(Element el : linhaPesqElements){
             Pesquisa pesquisa = new Pesquisa(el.getAttribute("nome"));
@@ -72,17 +88,11 @@ public class ProgramaPosGraduacao {
             System.out.println(prof.getCod());
             professores.add(prof);
         }
-        
-        file.deleteOnExit();
-        
-        checkCurriculos(programaPos);
-        
-        
+        fileContents.deleteOnExit();
     }
     
-    public void checkCurriculos(String programaPos) throws IOException{
+    private void checkCurriculos(String programaPos) throws IOException{
         
-        Download download;
         File file;
         DescompactadorUnzip unzip;
         
@@ -93,7 +103,7 @@ public class ProgramaPosGraduacao {
                 System.out.println(prof.getCod());
                 file = new File(prof.getCod()+ ".zip");
                 if(!file.exists())
-                    download = new Download(programaPos, prof.getCod());
+                    new Download(programaPos, prof.getCod());
 
                 unzip = new DescompactadorUnzip(prof.getCod()+".zip", prof.getNome());
             }
