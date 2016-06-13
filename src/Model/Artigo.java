@@ -12,6 +12,39 @@ package Model;
  */
 public class Artigo {
     
-    enum classificacao {A1, A2, B1, B2, B3, B4,  C, NC};
-    Aluno aluno;
+    private String classificacao;
+    private Boolean revista;
+    private Boolean conferencia;
+    int ano;
+    
+    public Artigo(int ano){
+        this.classificacao = null;
+        revista = false;
+        conferencia = false;
+        this.ano = ano;
+    }
+
+    public Boolean getRevista() {
+        return revista;
+    }
+
+    public void setRevista(Boolean revista) {
+        this.revista = revista;
+    }
+
+    public Boolean getConferencia() {
+        return conferencia;
+    }
+
+    public void setConferencia(Boolean conferencia) {
+        this.conferencia = conferencia;
+    }
+
+    public String getClassificacao() {
+        return classificacao;
+    }
+
+    public void setClassificacao(String classificacao) {
+        this.classificacao = classificacao;
+    }
 }

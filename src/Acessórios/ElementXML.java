@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
  */
 public class ElementXML {
     
-    public List<Element> getElementXML(String pathArquivo, String tag) throws IOException, SAXException, ParserConfigurationException{
+    public static List<Element> getElementXML(String pathArquivo, String tag) throws IOException, SAXException, ParserConfigurationException{
         
         List<Element> elementos = new ArrayList<>();
         

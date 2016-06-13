@@ -1,26 +1,21 @@
 package Controller;
 
 
+import Acessórios.CurriculoMining;
 import Acessórios.DescompactadorUnzip;
 import Acessórios.Download;
 import Acessórios.ElementXML;
-import Model.Artigo;
-import Model.Pesquisa;
+import Acessórios.XMLUtils;
+import Model.Curriculo;
+import Model.LinhaPesquisa;
 import Model.Professor;
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
@@ -32,35 +27,56 @@ import org.xml.sax.SAXException;
  */
 public class ProgramaPosGraduacao {
     
+    String nomePrograma;
+    
     private final String URL_QUALIS = "https://s3.amazonaws.com/posgraduacao/qualis.xml";
     private final String URL_CONTENTS = "https://s3.amazonaws.com/posgraduacao/[nome_do_programa]/contents.xml";
     
     private List<Professor> professores;
-    private List<Pesquisa> pesquisas;
+    private List<LinhaPesquisa> pesquisas;
     
     private List<Element> linhaPesqElements;
     private List<Element> profElements;
     
-    private ElementXML captura;
 //    Date ultimaAval;
 //    Date primAval;
     
     public ProgramaPosGraduacao(String programaPos) throws MalformedURLException, IOException, SAXException, ParserConfigurationException {
         
+        this.nomePrograma = programaPos;
+        
         professores = new ArrayList<>();
         pesquisas = new ArrayList<>();
+        
         linhaPesqElements = new ArrayList<>();
         profElements = new ArrayList<>();
         
-        captura = new ElementXML();
+        carregaContents(nomePrograma);
         
-        carregaContents(programaPos);
-        
-        checkCurriculos(programaPos);
+        checkCurriculos(nomePrograma);
         
         File fileQualis = new File("qualis.xml");
         if(!fileQualis.exists())
             new Download(new URL(URL_QUALIS));
+        
+        for(Professor prof : professores){
+            CurriculoMining cm = new CurriculoMining();
+            cm.startMining("Curriculos\\"+ prof.getNome() +"\\curriculo.xml");
+            
+            Curriculo curriculo = new Curriculo();
+            curriculo.setArtigos(cm.getArtigos());
+            curriculo.setBancasDoutorado(cm.getBancasDoutorado().size());
+            curriculo.setBancasMestrado(cm.getBancasMestrado().size());
+            curriculo.setBancasPFGraduacao(cm.getBancasPFGraduacao().size());
+            curriculo.setOrientaDoutorado(cm.getOrientaDoutorado().size());
+            curriculo.setOrientaMestrado(cm.getOrientaMestrado().size());
+            curriculo.setOrientaPFGraduacao(cm.getOrientaPFGraduacao().size());
+            curriculo.setOrientaDrAndamento(cm.getOrientaDrAndamento().size());
+            curriculo.setOrientaMestrAndamento(cm.getOrientaMestrAndamento().size());
+            curriculo.setOrientaPFGraduAndamento(cm.getOrientaPFGraduAndamento().size());
+            
+            prof.setCurriculo(curriculo);
+        }
         
         
         
@@ -74,13 +90,15 @@ public class ProgramaPosGraduacao {
             new Download(oURL);
         }
         
-        linhaPesqElements = captura.getElementXML(fileContents.getAbsolutePath(), "linha");
-        profElements = captura.getElementXML(fileContents.getAbsolutePath(), "professor");
+        linhaPesqElements = ElementXML.getElementXML(fileContents.getAbsolutePath(), "linha");
+        profElements = ElementXML.getElementXML(fileContents.getAbsolutePath(), "professor");
         
         for(Element el : linhaPesqElements){
-            Pesquisa pesquisa = new Pesquisa(el.getAttribute("nome"));
+            LinhaPesquisa pesquisa = new LinhaPesquisa(el.getAttribute("nome"));
             System.out.println(el.getAttribute("nome"));
-            pesquisas.add(pesquisa);    
+            pesquisas.add(pesquisa);
+            
+            Element professorElement = XMLUtils.getSingleElement(el, "professor");
         }
         
         for(Element el : profElements){
@@ -88,7 +106,7 @@ public class ProgramaPosGraduacao {
             System.out.println(prof.getCod());
             professores.add(prof);
         }
-        fileContents.deleteOnExit();
+        //fileContents.deleteOnExit();
     }
     
     private void checkCurriculos(String programaPos) throws IOException{
