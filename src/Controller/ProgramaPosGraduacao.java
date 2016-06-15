@@ -9,6 +9,7 @@ import Acessórios.XMLUtils;
 import Model.Curriculo;
 import Model.LinhaPesquisa;
 import Model.Professor;
+import Model.Regex;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -34,11 +35,12 @@ public class ProgramaPosGraduacao {
     
     private List<Professor> professores;
     private List<LinhaPesquisa> pesquisas;
+    private List<Regex> regexs;
     
-    private List<Element> linhaPesqElements;
-    private List<Element> profElements;
+    List<Element> linhaPesqElements;
+//    List<Element> profElements;
     
-//    Date ultimaAval;
+//      Date ultimaAval;
 //    Date primAval;
     
     public ProgramaPosGraduacao(String programaPos) throws MalformedURLException, IOException, SAXException, ParserConfigurationException {
@@ -46,18 +48,105 @@ public class ProgramaPosGraduacao {
         this.nomePrograma = programaPos;
         
         professores = new ArrayList<>();
+//        profElements = new ArrayList<>();
         pesquisas = new ArrayList<>();
+        regexs = new ArrayList<>();
         
-        linhaPesqElements = new ArrayList<>();
-        profElements = new ArrayList<>();
+        carregaContents();
         
-        carregaContents(nomePrograma);
+        checkCurriculos();
         
-        checkCurriculos(nomePrograma);
+        checkQualis();
         
+        carregaCurriculos();
+        
+//        File fileQualis = new File("qualis.xml");
+//        if(!fileQualis.exists())
+//            new Download(new URL(URL_QUALIS));
+        
+        
+        
+        
+        
+    }
+    
+    private void carregaContents() throws ParserConfigurationException, IOException, SAXException{
+        
+        linhaPesqElements = new ArrayList();
+        
+        File fileContents = new File("contents.xml");
+        if(!fileContents.exists()){
+            URL oURL = new URL(URL_CONTENTS.replace("[nome_do_programa]", nomePrograma));
+            Download download = new Download(oURL);
+        }
+        
+        linhaPesqElements = ElementXML.getElementXML(fileContents.getAbsolutePath(), "linha");
+//        profElements = ElementXML.getElementXML(fileContents.getAbsolutePath(), "professor");
+        
+        for(Element el : linhaPesqElements){
+            LinhaPesquisa pesquisa = new LinhaPesquisa(el.getAttribute("nome"));
+            System.out.println(el.getAttribute("nome"));
+            pesquisas.add(pesquisa);
+            
+            List<Element> professorElements = XMLUtils.getElements(el, "professor");
+            for(Element professor : professorElements){
+                Professor prof = new Professor(XMLUtils.getStringAttribute(professor, "nome"), XMLUtils.getLongAttribute(professor, "codigo"));
+                prof.addLinhaPesquisa(pesquisa.getNome());
+                
+                System.out.println(prof.getNome() + prof.getCod() + prof.getUmaLinhaPesquisa(0));
+                if(professores.contains(prof))
+                    professores.get(professores.indexOf(prof)).addLinhaPesquisa(pesquisa.getNome());
+                else
+                    professores.add(prof);
+            }
+        }
+        
+//        for(Element el : profElements){
+//            Professor prof = new Professor(el.getAttribute("nome"), el.getAttribute("codigo"));
+//            System.out.println(prof.getCod());
+//            professores.add(prof);
+//        }
+        //fileContents.deleteOnExit();
+    }
+    
+    private void checkCurriculos() throws IOException{
+        
+        Download downZipCurriculos;
+        DescompactadorUnzip unzip;
+        
+        for(Professor prof : professores){
+            File file = new File("Curriculos" + File.separator + prof.getNome() + File.separator + "curriculo.xml");
+            System.out.println(file.getAbsolutePath());
+            if(!file.exists()){
+                System.out.println((prof.getCodEmString()));
+                file = new File(prof.getCodEmString()+ ".zip");
+                if(!file.exists())
+                    downZipCurriculos = new Download(nomePrograma, prof.getCodEmString());
+
+                unzip = new DescompactadorUnzip(prof.getCodEmString()+".zip", prof.getNome());
+            }
+        }   
+    }
+    
+    private void checkQualis() throws MalformedURLException, IOException, SAXException, ParserConfigurationException{
+        
+        Download downQualis;
+                
         File fileQualis = new File("qualis.xml");
         if(!fileQualis.exists())
-            new Download(new URL(URL_QUALIS));
+            downQualis = new Download(new URL(URL_QUALIS));
+        
+        List<Element> regexElements = ElementXML.getElementXML(fileQualis.getAbsolutePath(), "entry");
+        
+        for(Element entry : regexElements){
+            
+            Regex regex = new Regex(XMLUtils.getStringAttribute(entry, "regex"), XMLUtils.getStringAttribute(entry, "class"), XMLUtils.getStringAttribute(entry, "type"));
+            regexs.add(regex);
+            System.out.println(regex.getRegex() + regex.getClassificacao() + regex.getType());
+        }
+    }
+
+    private void carregaCurriculos() throws SAXException, IOException, ParserConfigurationException{
         
         for(Professor prof : professores){
             CurriculoMining cm = new CurriculoMining();
@@ -77,54 +166,5 @@ public class ProgramaPosGraduacao {
             
             prof.setCurriculo(curriculo);
         }
-        
-        
-        
-    }
-    
-    private void carregaContents(String programaPos) throws ParserConfigurationException, IOException, SAXException{
-        
-        File fileContents = new File("contents.xml");
-        if(!fileContents.exists()){
-            URL oURL = new URL(URL_CONTENTS.replace("[nome_do_programa]", programaPos));
-            new Download(oURL);
-        }
-        
-        linhaPesqElements = ElementXML.getElementXML(fileContents.getAbsolutePath(), "linha");
-        profElements = ElementXML.getElementXML(fileContents.getAbsolutePath(), "professor");
-        
-        for(Element el : linhaPesqElements){
-            LinhaPesquisa pesquisa = new LinhaPesquisa(el.getAttribute("nome"));
-            System.out.println(el.getAttribute("nome"));
-            pesquisas.add(pesquisa);
-            
-            Element professorElement = XMLUtils.getSingleElement(el, "professor");
-        }
-        
-        for(Element el : profElements){
-            Professor prof = new Professor(el.getAttribute("nome"), el.getAttribute("codigo"));
-            System.out.println(prof.getCod());
-            professores.add(prof);
-        }
-        //fileContents.deleteOnExit();
-    }
-    
-    private void checkCurriculos(String programaPos) throws IOException{
-        
-        File file;
-        DescompactadorUnzip unzip;
-        
-        for(Professor prof : professores){
-            file = new File("Curriculos" + File.separator + prof.getNome() + File.separator + "curriculo.xml");
-            System.out.println(file.getAbsolutePath());
-            if(!file.exists()){
-                System.out.println(prof.getCod());
-                file = new File(prof.getCod()+ ".zip");
-                if(!file.exists())
-                    new Download(programaPos, prof.getCod());
-
-                unzip = new DescompactadorUnzip(prof.getCod()+".zip", prof.getNome());
-            }
-        }   
     }
 }

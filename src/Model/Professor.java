@@ -2,6 +2,7 @@ package Model;
 
 
 import java.util.List;
+import java.util.Vector;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -16,8 +17,8 @@ import java.util.List;
 public class Professor {
     
     private String nome;
-    private String cod;
-    private String[] linhasPesquisa;
+    private long cod;
+    private Vector<String> linhasPesquisa;
     private Curriculo curriculo;
 //    private String instituicao;
 //    private String formacao;
@@ -26,10 +27,9 @@ public class Professor {
     
     
 
-    public Professor(String nome, String cod){//, Curriculo curriculo, String instituicao, String graduacao, String formacao, List<Artigo> artigos) {
+    public Professor(String nome, long cod){//, Curriculo curriculo, String instituicao, String graduacao, String formacao, List<Artigo> artigos) {
         this.nome = nome;
         this.cod = cod;
-        this.linhasPesquisa = linhasPesquisa;
 //        this.curriculo = curriculo;
 //        this.instituicao = instituicao;
 //        this.graduacao = graduacao;
@@ -69,20 +69,34 @@ public class Professor {
 //        this.artigos = artigos;
 //    }
     
-     public String getCod() {
+    public String getCodEmString(){
+        return String.valueOf(cod);
+    }
+    
+    public long getCod() {
         return cod;
     }
 
-    public void setCod(String cod) {
+    public void setCod(int cod) {
         this.cod = cod;
     }
     
-    public String[] getLinhasPesquisa() {
+    public Vector<String> getLinhasPesquisa() {
         return linhasPesquisa;
     }
+    
+    public String getUmaLinhaPesquisa(int o){
+        
+        return linhasPesquisa.get(o);
+    }
 
-    public void setLinhaPesquisa(String linhaPesquisa, int i) {
-        this.linhasPesquisa[i] = linhaPesquisa;
+    public void addLinhaPesquisa(String linhaPesquisa) {
+        
+        if(linhasPesquisa == null){
+            linhasPesquisa = new Vector<>();
+            linhasPesquisa.add(linhaPesquisa);
+        }else
+            linhasPesquisa.add(linhaPesquisa);
     }
 
     public Curriculo getCurriculo() {

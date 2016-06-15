@@ -20,12 +20,19 @@ import java.net.URL;
  */
 public class Download {
     
+    private URL oURL;
+    
+    private HttpURLConnection httpConn;
+    
     public Download(URL oURL){
-                                        // identifica o nome do arquivo a ser gerado para download.
-        String nameFile = oURL.toString().substring(oURL.toString().lastIndexOf("/")+1, oURL.toString().length());
         
+        // identifica o nome do arquivo a ser gerado para download.
+        String nameFile = oURL.toString().substring(oURL.toString().lastIndexOf("/")+1, oURL.toString().length());
+            
         try{
-            HttpURLConnection httpConn = (HttpURLConnection)oURL.openConnection();                
+            this.oURL = oURL;
+            
+            httpConn = (HttpURLConnection) this.oURL.openConnection();                
 
             if(httpConn.getResponseCode() == HttpURLConnection.HTTP_OK){
 
@@ -52,8 +59,9 @@ public class Download {
     public Download(String programaPos, String codProf){
         
         try{
-            URL oURL = new URL("https://s3.amazonaws.com/posgraduacao/" + programaPos + "/" + codProf + ".zip");
-            HttpURLConnection httpConn = (HttpURLConnection)oURL.openConnection();
+            this.oURL = new URL("https://s3.amazonaws.com/posgraduacao/" + programaPos + "/" + codProf + ".zip");
+            
+            httpConn = (HttpURLConnection)oURL.openConnection();
 
             if(httpConn.getResponseCode() == HttpURLConnection.HTTP_OK){
 
