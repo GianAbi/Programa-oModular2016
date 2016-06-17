@@ -35,7 +35,7 @@ public class Relatorio {
         br.write(toBeWritten);
         br.write("\n");
     }
-    
+   
     public void closeRelatorio() throws IOException{
         br.close();
     }

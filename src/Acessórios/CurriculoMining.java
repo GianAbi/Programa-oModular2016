@@ -6,10 +6,13 @@
 package Acessórios;
 
 import Model.Artigo;
+import Model.Regex;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -20,228 +23,324 @@ import org.xml.sax.SAXException;
  */
 public class CurriculoMining {
     
-    private List<Artigo> artigos = new ArrayList<>();
-    private List<Element> bancasDoutorado = new ArrayList<>();
-    private List<Element> bancasMestrado = new ArrayList<>();
-    private List<Element> bancasPFGraduacao = new ArrayList<>();
-    private List<Element> orientaDoutorado = new ArrayList<>();
-    private List<Element> orientaMestrado = new ArrayList<>();
-    private List<Element> orientaPFGraduacao = new ArrayList<>();
-    private List<Element> orientaDrAndamento = new ArrayList<>();
-    private List<Element> orientaMestrAndamento = new ArrayList<>();
-    private List<Element> orientaPFGraduAndamento = new ArrayList<>();
+    List<Regex> regexs;
+    int anoIni;
+    int anoFim;
+    String data;
     
-    public void startMining(String data) throws SAXException, IOException, ParserConfigurationException{
+    private List<Artigo> artigos;
+    private List<Element> bancasDoutorado;
+    private List<Element> bancasMestrado;
+    private List<Element> bancasPFGraduacao;
+    private List<Element> orientaDoutorado;
+    private List<Element> orientaMestrado;
+    private List<Element> orientaPFGraduacao;
+    private List<Element> orientaDrAndamento;
+    private List<Element> orientaMestrAndamento;
+    private List<Element> orientaPFGraduAndamento;
+    
+    public CurriculoMining(String data, int anoInicio, int anoFim,  List<Regex> regexs) throws SAXException, IOException, ParserConfigurationException{
         
-        artigos = getArtigos(data, "2005", "2016");
-        bancasDoutorado = getBancasDoutorado(data, "2006", "2016");
-        bancasMestrado = getBancasMestrado(data, "2006", "2016");
-        bancasPFGraduacao = getBancasPFGraduacao(data, "2006", "2016");
-        orientaDoutorado = getOrientaDoutorado(data, "2006", "2016");
-        orientaMestrado = getOrientaMestrado(data, "2006", "2016");
-        orientaPFGraduacao = getOrientaPFGraduacao(data, "2006", "2016");
-        orientaDrAndamento = getOrientaDrAndamento(data, "2006", "2016");
-        orientaMestrAndamento = getOrientaMestrAndamento(data, "2006", "2016");
-        orientaPFGraduAndamento = getOrientaPFGraduAndamento(data, "2006", "2016");
+        this.regexs = regexs;
+        this.anoIni = anoInicio;
+        this.anoFim = anoFim;
+        this.data = data;
+        
+        artigos = new ArrayList<>();
+        bancasDoutorado = new ArrayList<>();
+        bancasMestrado = new ArrayList<>();
+        bancasPFGraduacao = new ArrayList<>();
+        orientaDoutorado = new ArrayList<>();
+        orientaMestrado = new ArrayList<>();
+        orientaPFGraduacao = new ArrayList<>();
+        orientaDrAndamento = new ArrayList<>();
+        orientaMestrAndamento = new ArrayList<>();
+        orientaPFGraduAndamento = new ArrayList<>();
+        
+        artigos = getArtigosXML();
+        bancasDoutorado = getBancasDoutoradoXML();
+        bancasMestrado = getBancasMestradoXML();
+        bancasPFGraduacao = getBancasPFGraduacaoXML();
+        orientaDoutorado = getOrientaDoutoradoXML();
+        orientaMestrado = getOrientaMestradoXML();
+        orientaPFGraduacao = getOrientaPFGraduacaoXML();
+        orientaDrAndamento = getOrientaDrAndamentoXML();
+        orientaMestrAndamento = getOrientaMestrAndamentoXML();
+        orientaPFGraduAndamento = getOrientaPFGraduAndamentoXML();
         
     }
     
-    public static List<Element> getOrientaPFGraduAndamento(String data, String anoInicial, String anoFinal) throws IOException, SAXException, ParserConfigurationException{
-        int anoIni = Integer.parseInt(anoInicial);
-        int anoFim = Integer.parseInt(anoFinal);
+    private List<Element> getOrientaPFGraduAndamentoXML() throws IOException, SAXException, ParserConfigurationException{
+        
+        Element trashOrientacao = null;
                                                                             
         List<Element> orientacoes = ElementXML.getElementXML(data, "OUTRAS-ORIENTACOES-EM-ANDAMENTO");
         System.out.println(orientacoes.size());
         
-        for(Element orientacao : orientacoes){                                                
+        for(Element orientacao : orientacoes){
+            if(!(trashOrientacao == null)){
+                orientacoes.remove(trashOrientacao);
+                trashOrientacao = null;
+            }
+            
             Element dadosBasicos = XMLUtils.getSingleElement(orientacao, "DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-EM-ANDAMENTO");
             int anoPublic = Integer.parseInt(XMLUtils.getStringAttribute(dadosBasicos, "ANO"));
             System.out.println(anoPublic);
             
             if(!(anoPublic >= anoIni && anoPublic <= anoFim)){
-                orientacoes.remove(orientacao);
-                break;
+                trashOrientacao = orientacao;
+                continue;
             }
             
             String natureza = XMLUtils.getStringAttribute(dadosBasicos, "NATUREZA");
             if(!natureza.equals("TRABALHO_DE_CONCLUSAO_DE_CURSO_GRADUACAO")){
-                orientacoes.remove(orientacao);
-                break;
+                trashOrientacao = orientacao;
             }
+        }
+        if(!(trashOrientacao == null)){
+            orientacoes.remove(trashOrientacao);
+            trashOrientacao = null;
         }
                  
         return orientacoes;
     }
     
-    public static List<Element> getOrientaMestrAndamento(String data, String anoInicial, String anoFinal) throws IOException, SAXException, ParserConfigurationException{
-        int anoIni = Integer.parseInt(anoInicial);
-        int anoFim = Integer.parseInt(anoFinal);
+    private List<Element> getOrientaMestrAndamentoXML() throws IOException, SAXException, ParserConfigurationException{
+        
+        Element trashOrientacao = null;
                                                                             
         List<Element> orientacoes = ElementXML.getElementXML(data, "ORIENTACAO-EM-ANDAMENTO-DE-MESTRADO");
         System.out.println(orientacoes.size());
         
-        for(Element orientacao : orientacoes){                                                
+        for(Element orientacao : orientacoes){
+            if(!(trashOrientacao == null)){
+                orientacoes.remove(trashOrientacao);
+                trashOrientacao = null;
+            }
+            
             Element dadosBasicos = XMLUtils.getSingleElement(orientacao, "DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-MESTRADO");
             int anoPublic = Integer.parseInt(XMLUtils.getStringAttribute(dadosBasicos, "ANO"));
             System.out.println(anoPublic);
             
             if(!(anoPublic >= anoIni && anoPublic <= anoFim)){
-                orientacoes.remove(orientacao);
-                break;
+                trashOrientacao = orientacao;
             }
+        }
+        if(!(trashOrientacao == null)){
+            orientacoes.remove(trashOrientacao);
+            trashOrientacao = null;
         }
                  
         return orientacoes;
     }
     
-    public static List<Element> getOrientaDrAndamento(String data, String anoInicial, String anoFinal) throws IOException, SAXException, ParserConfigurationException{
-        int anoIni = Integer.parseInt(anoInicial);
-        int anoFim = Integer.parseInt(anoFinal);
+    private List<Element> getOrientaDrAndamentoXML() throws IOException, SAXException, ParserConfigurationException{
+        
+        Element trashOrientacao = null;
                                                                             
         List<Element> orientacoes = ElementXML.getElementXML(data, "ORIENTACAO-EM-ANDAMENTO-DE-DOUTORADO");
         System.out.println(orientacoes.size());
         
-        for(Element orientacao : orientacoes){                                                
+        for(Element orientacao : orientacoes){
+            if(!(trashOrientacao == null)){
+                orientacoes.remove(trashOrientacao);
+                trashOrientacao = null;
+            }
+            
             Element dadosBasicos = XMLUtils.getSingleElement(orientacao, "DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-DOUTORADO");
             int anoPublic = Integer.parseInt(XMLUtils.getStringAttribute(dadosBasicos, "ANO"));
             System.out.println(anoPublic);
             
             if(!(anoPublic >= anoIni && anoPublic <= anoFim)){
-                orientacoes.remove(orientacao);
-                break;
+                trashOrientacao = orientacao;
             }
+        }
+        if(!(trashOrientacao == null)){
+            orientacoes.remove(trashOrientacao);
+            trashOrientacao = null;
         }
                  
         return orientacoes;
     }
     
-    public static List<Element> getOrientaPFGraduacao(String data, String anoInicial, String anoFinal) throws IOException, SAXException, ParserConfigurationException{
-        int anoIni = Integer.parseInt(anoInicial);
-        int anoFim = Integer.parseInt(anoFinal);
+    private List<Element> getOrientaPFGraduacaoXML() throws IOException, SAXException, ParserConfigurationException{
+        
+        Element trashOrientacao = null;
                                                                             
         List<Element> orientacoes = ElementXML.getElementXML(data, "OUTRAS-ORIENTACOES-CONCLUIDAS");
         System.out.println(orientacoes.size());
         
-        for(Element orientacao : orientacoes){                                                
-            Element dadosBasicos = XMLUtils.getSingleElement(orientacao, "DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-MESTRADO");
+        for(Element orientacao : orientacoes){
+            if(!(trashOrientacao == null)){
+                orientacoes.remove(trashOrientacao);
+                trashOrientacao = null;
+            }
+            
+            Element dadosBasicos = XMLUtils.getSingleElement(orientacao, "DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS");
             int anoPublic = Integer.parseInt(XMLUtils.getStringAttribute(dadosBasicos, "ANO"));
             System.out.println(anoPublic);
             
             if(!(anoPublic >= anoIni && anoPublic <= anoFim)){
-                orientacoes.remove(orientacao);
-                break;
+                trashOrientacao = orientacao;
+                continue;
             }
             
             String natureza = XMLUtils.getStringAttribute(dadosBasicos, "NATUREZA");
+            
             if(!natureza.equals("TRABALHO_DE_CONCLUSAO_DE_CURSO_GRADUACAO")){
-                orientacoes.remove(orientacao);
-                break;
+                trashOrientacao = orientacao;
             }
+        }
+        if(!(trashOrientacao == null)){
+            orientacoes.remove(trashOrientacao);
+            trashOrientacao = null;
         }
                  
         return orientacoes;
     }
     
-    public static List<Element> getOrientaMestrado(String data, String anoInicial, String anoFinal) throws IOException, SAXException, ParserConfigurationException{
-        int anoIni = Integer.parseInt(anoInicial);
-        int anoFim = Integer.parseInt(anoFinal);
+    private List<Element> getOrientaMestradoXML() throws IOException, SAXException, ParserConfigurationException{
+        
+        Element trashOrientacao = null;
                                                                             
         List<Element> orientacoes = ElementXML.getElementXML(data, "ORIENTACOES-CONCLUIDAS-PARA-MESTRADO");
         System.out.println(orientacoes.size());
         
-        for(Element orientacao : orientacoes){                                                
+        for(Element orientacao : orientacoes){ 
+            if(!(trashOrientacao == null)){
+                orientacoes.remove(trashOrientacao);
+                trashOrientacao = null;
+            }
+            
             Element dadosBasicos = XMLUtils.getSingleElement(orientacao, "DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-MESTRADO");
             int anoPublic = Integer.parseInt(XMLUtils.getStringAttribute(dadosBasicos, "ANO"));
             System.out.println(anoPublic);
             
             if(!(anoPublic >= anoIni && anoPublic <= anoFim))
-                orientacoes.remove(orientacao);          
+                trashOrientacao = orientacao;          
+        }
+        if(!(trashOrientacao == null)){
+            orientacoes.remove(trashOrientacao);
+            trashOrientacao = null;
         }
                  
         return orientacoes;
     }
     
-    public static List<Element> getOrientaDoutorado(String data, String anoInicial, String anoFinal) throws IOException, SAXException, ParserConfigurationException{
-        int anoIni = Integer.parseInt(anoInicial);
-        int anoFim = Integer.parseInt(anoFinal);
+    private List<Element> getOrientaDoutoradoXML() throws IOException, SAXException, ParserConfigurationException{
+        
+        Element trashOrientacao = null;
                                                                             // VERIFICAR STRING NUM CURRICULO QUE TENHO ORIENTACAO PARA DOUTORADO
         List<Element> orientacoes = ElementXML.getElementXML(data, "ORIENTACOES-CONCLUIDAS-PARA-DOUTORADO");
         System.out.println(orientacoes.size());
         
         for(Element orientacao : orientacoes){                                                // VERIFICAR STRING NUM CURRICULO QUE TENHO ORIENTACAO PARA DOUTORADO
+            if(!(trashOrientacao == null)){
+                orientacoes.remove(trashOrientacao);
+                trashOrientacao = null;
+            }
+            
             Element dadosBasicos = XMLUtils.getSingleElement(orientacao, "DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-MESTRADO");
             int anoPublic = Integer.parseInt(XMLUtils.getStringAttribute(dadosBasicos, "ANO"));
             System.out.println(anoPublic);
             
             if(!(anoPublic >= anoIni && anoPublic <= anoFim))
-                orientacoes.remove(orientacao);          
+                trashOrientacao = orientacao;          
+        }
+        if(!(trashOrientacao == null)){
+            orientacoes.remove(trashOrientacao);
+            trashOrientacao = null;
         }
                  
         return orientacoes;
     }
     
-    public static List<Element> getBancasPFGraduacao(String data, String anoInicial, String anoFinal) throws IOException, SAXException, ParserConfigurationException{
-        int anoIni = Integer.parseInt(anoInicial);
-        int anoFim = Integer.parseInt(anoFinal);
+    private List<Element> getBancasPFGraduacaoXML() throws IOException, SAXException, ParserConfigurationException{
+        
+        Element trashBanca = null;
         
         List<Element> bancas = ElementXML.getElementXML(data, "PARTICIPACAO-EM-BANCA-DE-GRADUACAO");
         System.out.println(bancas.size());
         
         for(Element banca : bancas){
+            if(!(trashBanca == null)){
+                bancas.remove(trashBanca);
+                trashBanca = null;
+            }
+            
             Element dadosBasicos = XMLUtils.getSingleElement(banca, "DADOS-BASICOS-DA-PARTICIPACAO-EM-BANCA-DE-GRADUACAO");
             int anoPublic = Integer.parseInt(XMLUtils.getStringAttribute(dadosBasicos, "ANO"));
             System.out.println(anoPublic);
             
             if(!(anoPublic >= anoIni && anoPublic <= anoFim))
-                bancas.remove(banca);          
+                trashBanca = banca;          
+        }
+        if(!(trashBanca == null)){
+            bancas.remove(trashBanca);
+            trashBanca = null;
         }
                  
         return bancas;
     }
     
-    public static List<Element> getBancasMestrado(String data, String anoInicial, String anoFinal) throws IOException, SAXException, ParserConfigurationException{
-        int anoIni = Integer.parseInt(anoInicial);
-        int anoFim = Integer.parseInt(anoFinal);
+    private List<Element> getBancasMestradoXML() throws IOException, SAXException, ParserConfigurationException{
+        
+        Element trashBanca = null;
         
         List<Element> bancas = ElementXML.getElementXML(data, "PARTICIPACAO-EM-BANCA-DE-MESTRADO");
         System.out.println(bancas.size());
         
         for(Element banca : bancas){
+            if(!(trashBanca == null)){
+                bancas.remove(trashBanca);
+                trashBanca = null;
+            }
+            
             Element dadosBasicos = XMLUtils.getSingleElement(banca, "DADOS-BASICOS-DA-PARTICIPACAO-EM-BANCA-DE-MESTRADO");
             int anoPublic = Integer.parseInt(XMLUtils.getStringAttribute(dadosBasicos, "ANO"));
             System.out.println(anoPublic);
             
             if(!(anoPublic >= anoIni && anoPublic <= anoFim))
-                bancas.remove(banca);           
+                trashBanca = banca;           
+        }
+        if(!(trashBanca == null)){
+            bancas.remove(trashBanca);
+            trashBanca = null;
         }
                  
         return bancas;
     }
     
-    public static List<Element> getBancasDoutorado(String data, String anoInicial, String anoFinal) throws IOException, SAXException, ParserConfigurationException{
-        int anoIni = Integer.parseInt(anoInicial);
-        int anoFim = Integer.parseInt(anoFinal);
+    private List<Element> getBancasDoutoradoXML() throws IOException, SAXException, ParserConfigurationException{
         
+        Element trashBanca = null;
         List<Element> bancas = ElementXML.getElementXML(data, "PARTICIPACAO-EM-BANCA-DE-DOUTORADO");
         System.out.println(bancas.size());
         
         for(Element banca : bancas){
+            if(!(trashBanca == null)){
+                bancas.remove(trashBanca);
+                trashBanca = null;
+            }    
             Element dadosBasicos = XMLUtils.getSingleElement(banca, "DADOS-BASICOS-DA-PARTICIPACAO-EM-BANCA-DE-DOUTORADO");
             int anoPublic = Integer.parseInt(XMLUtils.getStringAttribute(dadosBasicos, "ANO"));
             System.out.println(anoPublic);
             
             if(!(anoPublic >= anoIni && anoPublic <= anoFim))
-                bancas.remove(banca);
+                trashBanca = banca;
                 
         }
-                 
+        if(!(trashBanca == null)){
+            bancas.remove(trashBanca);
+            trashBanca = null;
+        }
+        
+             
         return bancas;
     }
     
-    public static List<Artigo> getArtigos(String data, String anoInicial, String anoFinal) throws IOException, SAXException, ParserConfigurationException{
-        int anoIni = Integer.parseInt(anoInicial);
-        int anoFim = Integer.parseInt(anoFinal);
-        
+    private List<Artigo> getArtigosXML() throws IOException, SAXException, ParserConfigurationException{
+                
         List<Artigo> artigos = new ArrayList<>();
         
         List<Element> artigosPublicados = ElementXML.getElementXML(data, "ARTIGO-PUBLICADO");
@@ -255,7 +354,7 @@ public class CurriculoMining {
             if(! (anoPublic >= anoIni && anoPublic <= anoFim)){
                 
 //                artigosPublicados.remove(umArtigo);
-//                continue;
+                continue;
             }
             
             Element detalhamento = XMLUtils.getSingleElement(umArtigo, "DETALHAMENTO-DO-ARTIGO");
@@ -263,7 +362,9 @@ public class CurriculoMining {
             System.out.println(publicacao);
             
             Artigo artigo = new Artigo(anoPublic);
+            System.out.println(artigo.getAno()+ " " +artigo.getClassificacao()+ " " +artigo.getConferencia()+ " " +artigo.getRevista() );
             classificaArtigo(publicacao, artigo);
+            System.out.println(artigo.getAno()+ " " +artigo.getClassificacao()+ " " +artigo.getConferencia()+ " " +artigo.getRevista() );
             
             artigos.add(artigo);
         }
@@ -271,17 +372,21 @@ public class CurriculoMining {
         return artigos;
     }
     
-    private static void classificaArtigo(String classificacao, Artigo artigo) throws IOException, SAXException, ParserConfigurationException{
+    private void classificaArtigo(String classificacao, Artigo artigo) throws IOException, SAXException, ParserConfigurationException{
         
-        List<Element> allEntry = ElementXML.getElementXML("qualis.xml", "entry");
+        //List<Element> allEntry = ElementXML.getElementXML("qualis.xml", "entry");
         
-        for(Element entry : allEntry){
-            System.out.println(entry.getAttribute("regex"));
-            System.out.println(entry.getAttribute(classificacao));
+        Pattern pattern;
         
-            if(entry.getAttribute("regex").equals(classificacao)){
-                artigo.setClassificacao(entry.getAttribute("class"));
-                if(entry.getAttribute("type").equals("Conferência"))
+        for(Regex regex : regexs){
+            pattern = Pattern.compile(".*"+classificacao+".*");
+            Matcher matcher = pattern.matcher(regex.getRegex());
+            
+            if(matcher.matches()){
+                System.out.println(regex.getRegex());
+                System.out.println(regex.getClassificacao());
+                artigo.setClassificacao(regex.getClassificacao());
+                if(regex.getType().equals("Conferência"))
                     artigo.setConferencia(true);
                 else
                     artigo.setRevista(true);

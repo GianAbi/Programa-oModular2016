@@ -5,7 +5,9 @@ import Acessórios.CurriculoMining;
 import Acessórios.DescompactadorUnzip;
 import Acessórios.Download;
 import Acessórios.ElementXML;
+import Acessórios.Relatorio;
 import Acessórios.XMLUtils;
+import Model.Artigo;
 import Model.Curriculo;
 import Model.LinhaPesquisa;
 import Model.Professor;
@@ -28,7 +30,9 @@ import org.xml.sax.SAXException;
  */
 public class ProgramaPosGraduacao {
     
-    String nomePrograma;
+    private String nomePrograma;
+    private int anoInicio;
+    private int anoFim;
     
     private final String URL_QUALIS = "https://s3.amazonaws.com/posgraduacao/qualis.xml";
     private final String URL_CONTENTS = "https://s3.amazonaws.com/posgraduacao/[nome_do_programa]/contents.xml";
@@ -37,15 +41,17 @@ public class ProgramaPosGraduacao {
     private List<LinhaPesquisa> pesquisas;
     private List<Regex> regexs;
     
-    List<Element> linhaPesqElements;
+    
 //    List<Element> profElements;
     
 //      Date ultimaAval;
 //    Date primAval;
     
-    public ProgramaPosGraduacao(String programaPos) throws MalformedURLException, IOException, SAXException, ParserConfigurationException {
+    public ProgramaPosGraduacao(String programaPos, String anoInicio, String anoFim) throws MalformedURLException, IOException, SAXException, ParserConfigurationException {
         
         this.nomePrograma = programaPos;
+        this.anoInicio = Integer.valueOf(anoInicio);
+        this.anoFim = Integer.valueOf(anoFim);
         
         professores = new ArrayList<>();
 //        profElements = new ArrayList<>();
@@ -58,7 +64,9 @@ public class ProgramaPosGraduacao {
         
         checkQualis();
         
-        carregaCurriculos();
+//        carregaCurriculos();
+        
+        geraRelatorio();
         
 //        File fileQualis = new File("qualis.xml");
 //        if(!fileQualis.exists())
@@ -72,7 +80,7 @@ public class ProgramaPosGraduacao {
     
     private void carregaContents() throws ParserConfigurationException, IOException, SAXException{
         
-        linhaPesqElements = new ArrayList();
+        List<Element> linhaPesqElements = new ArrayList();
         
         File fileContents = new File("contents.xml");
         if(!fileContents.exists()){
@@ -142,15 +150,15 @@ public class ProgramaPosGraduacao {
             
             Regex regex = new Regex(XMLUtils.getStringAttribute(entry, "regex"), XMLUtils.getStringAttribute(entry, "class"), XMLUtils.getStringAttribute(entry, "type"));
             regexs.add(regex);
-            System.out.println(regex.getRegex() + regex.getClassificacao() + regex.getType());
+            
         }
     }
 
     private void carregaCurriculos() throws SAXException, IOException, ParserConfigurationException{
         
         for(Professor prof : professores){
-            CurriculoMining cm = new CurriculoMining();
-            cm.startMining("Curriculos\\"+ prof.getNome() +"\\curriculo.xml");
+            CurriculoMining cm = new CurriculoMining("Curriculos\\"+ prof.getNome() +"\\curriculo.xml", anoInicio, anoFim, regexs);
+            //cm.startMining("Curriculos\\"+ prof.getNome() +"\\curriculo.xml", regexs);
             
             Curriculo curriculo = new Curriculo();
             curriculo.setArtigos(cm.getArtigos());
@@ -166,5 +174,48 @@ public class ProgramaPosGraduacao {
             
             prof.setCurriculo(curriculo);
         }
+    }
+    
+    private void geraRelatorio() throws IOException{
+        
+        Relatorio relatorio = new Relatorio();
+        
+        for(LinhaPesquisa lnPesquisa : pesquisas){
+            for(Professor prof : professores){
+                int ttArtA1 = 0;
+                int ttArtA2 = 0;
+                int ttArtB1 = 0;
+                int ttArtB2 = 0;
+                int ttArtB3 = 0;
+                int ttArtB4 = 0;
+                int ttArtC = 0;
+                int ttArtNC = 0;
+//                for(Artigo artigo : prof.getCurriculo().getArtigos()){
+//                    
+//                    if(artigo.getClassificacao().equals("A1"))
+//                        ++ttArtA1;
+//                    if(artigo.getClassificacao().equals("A2"))
+//                        ++ttArtA2;
+//                    if(artigo.getClassificacao().equals("B1"))
+//                        ++ttArtB1;
+//                    if(artigo.getClassificacao().equals("B2"))
+//                        ++ttArtB2;
+//                    if(artigo.getClassificacao().equals("B3"))
+//                        ++ttArtB3;
+//                    if(artigo.getClassificacao().equals("B4"))
+//                        ++ttArtB4;
+//                    if(artigo.getClassificacao().equals("C"))
+//                        ++ttArtC;
+//                    if(artigo.getClassificacao().equals("NC"))
+//                        ++ttArtNC;
+//                }
+                relatorio.escreve(prof.getNome()+"\t"+ttArtA1+"\t"+ttArtA2+"\t"+ttArtB1+"\t"+ttArtB2+"\t"+ttArtB3+"\t"+ttArtB4+"\t"+ttArtC+"\t"+ttArtNC);
+                
+            }
+            
+            relatorio.escreve("Total da linha de pesquisa '"+lnPesquisa.getNome()+"'");
+        }
+        
+        relatorio.closeRelatorio();
     }
 }

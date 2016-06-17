@@ -15,7 +15,7 @@ public class Artigo {
     private String classificacao;
     private Boolean revista;
     private Boolean conferencia;
-    int ano;
+    private int ano;
     
     public Artigo(int ano){
         this.classificacao = null;
@@ -46,5 +46,9 @@ public class Artigo {
 
     public void setClassificacao(String classificacao) {
         this.classificacao = classificacao;
+    }
+
+    public int getAno() {
+        return ano;
     }
 }

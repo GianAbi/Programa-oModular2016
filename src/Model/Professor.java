@@ -19,22 +19,13 @@ public class Professor {
     private String nome;
     private long cod;
     private Vector<String> linhasPesquisa;
-    private Curriculo curriculo;
-//    private String instituicao;
-//    private String formacao;
-    
-//    private List<Artigo> artigos;
-    
-    
+    private Curriculo curriculo;    
 
     public Professor(String nome, long cod){//, Curriculo curriculo, String instituicao, String graduacao, String formacao, List<Artigo> artigos) {
         this.nome = nome;
         this.cod = cod;
-//        this.curriculo = curriculo;
-//        this.instituicao = instituicao;
-//        this.graduacao = graduacao;
-//        this.formacao = formacao;
-//        this.artigos = artigos;
+        this.curriculo = null;
+        this.linhasPesquisa = null;
     }
     
     public String getNome() {
@@ -44,30 +35,6 @@ public class Professor {
     public void setNome(String nome) {
         this.nome = nome;
     }
-
-//    public String getInstituicao() {
-//        return instituicao;
-//    }
-//
-//    public void setInstituicao(String instituicao) {
-//        this.instituicao = instituicao;
-//    }
-//
-//    public String getFormacao() {
-//        return formacao;
-//    }
-//
-//    public void setFormacao(String formacao) {
-//        this.formacao = formacao;
-//    }
-//
-//    public List<Artigo> getArtigos() {
-//        return artigos;
-//    }
-//
-//    public void setArtigos(List<Artigo> artigos) {
-//        this.artigos = artigos;
-//    }
     
     public String getCodEmString(){
         return String.valueOf(cod);

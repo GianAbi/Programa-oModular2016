@@ -20,15 +20,15 @@ public class Start {
     
     public static void main(String args[]) throws IOException, MalformedURLException, SAXException, ParserConfigurationException{
         
-//        if (args.length < 3){
-//            System.out.println("Parâmetro insuficiente");
-//            return;
-//        }
+        if (args.length < 3){
+            System.out.println("Parâmetro insuficiente");
+            return;
+        }
         
         System.out.println(args.length);
         
         long start = System.currentTimeMillis();
-        ProgramaPosGraduacao ppg = new ProgramaPosGraduacao(args[0]);
+        ProgramaPosGraduacao ppg = new ProgramaPosGraduacao(args[0], args[1], args[2]);
         long end = System.currentTimeMillis();
         
         System.out.println((end-start)/1000 + "seg");
