@@ -41,12 +41,6 @@ public class ProgramaPosGraduacao {
     private List<LinhaPesquisa> pesquisas;
     private List<Regex> regexs;
     
-    
-//    List<Element> profElements;
-    
-//      Date ultimaAval;
-//    Date primAval;
-    
     public ProgramaPosGraduacao(String programaPos, String anoInicio, String anoFim) throws MalformedURLException, IOException, SAXException, ParserConfigurationException {
         
         this.nomePrograma = programaPos;
@@ -54,7 +48,6 @@ public class ProgramaPosGraduacao {
         this.anoFim = Integer.valueOf(anoFim);
         
         professores = new ArrayList<>();
-//        profElements = new ArrayList<>();
         pesquisas = new ArrayList<>();
         regexs = new ArrayList<>();
         
@@ -64,17 +57,9 @@ public class ProgramaPosGraduacao {
         
         checkQualis();
         
-//        carregaCurriculos();
+        carregaCurriculos();
         
-        geraRelatorio();
-        
-//        File fileQualis = new File("qualis.xml");
-//        if(!fileQualis.exists())
-//            new Download(new URL(URL_QUALIS));
-        
-        
-        
-        
+//        geraRelatorio();
         
     }
     
@@ -89,32 +74,24 @@ public class ProgramaPosGraduacao {
         }
         
         linhaPesqElements = ElementXML.getElementXML(fileContents.getAbsolutePath(), "linha");
-//        profElements = ElementXML.getElementXML(fileContents.getAbsolutePath(), "professor");
         
         for(Element el : linhaPesqElements){
             LinhaPesquisa pesquisa = new LinhaPesquisa(el.getAttribute("nome"));
-            System.out.println(el.getAttribute("nome"));
             pesquisas.add(pesquisa);
             
             List<Element> professorElements = XMLUtils.getElements(el, "professor");
+            
             for(Element professor : professorElements){
-                Professor prof = new Professor(XMLUtils.getStringAttribute(professor, "nome"), XMLUtils.getLongAttribute(professor, "codigo"));
-                prof.addLinhaPesquisa(pesquisa.getNome());
+                Professor prof = new Professor(XMLUtils.getStringAttribute(professor, "nome"), XMLUtils.getStringAttribute(professor, "codigo"));
+                prof.setLinhaPesquisa(pesquisa.getNome());
                 
-                System.out.println(prof.getNome() + prof.getCod() + prof.getUmaLinhaPesquisa(0));
                 if(professores.contains(prof))
-                    professores.get(professores.indexOf(prof)).addLinhaPesquisa(pesquisa.getNome());
+                    professores.get(professores.indexOf(prof)).setLinhaPesquisa(pesquisa.getNome());
                 else
                     professores.add(prof);
             }
         }
-        
-//        for(Element el : profElements){
-//            Professor prof = new Professor(el.getAttribute("nome"), el.getAttribute("codigo"));
-//            System.out.println(prof.getCod());
-//            professores.add(prof);
-//        }
-        //fileContents.deleteOnExit();
+        fileContents.deleteOnExit();
     }
     
     private void checkCurriculos() throws IOException{
@@ -123,15 +100,14 @@ public class ProgramaPosGraduacao {
         DescompactadorUnzip unzip;
         
         for(Professor prof : professores){
-            File file = new File("Curriculos" + File.separator + prof.getNome() + File.separator + "curriculo.xml");
-            System.out.println(file.getAbsolutePath());
-            if(!file.exists()){
-                System.out.println((prof.getCodEmString()));
-                file = new File(prof.getCodEmString()+ ".zip");
-                if(!file.exists())
-                    downZipCurriculos = new Download(nomePrograma, prof.getCodEmString());
+            File fileCurriculo = new File("Curriculos" + File.separator + prof.getNome() + File.separator + "curriculo.xml");
+            
+            if(!fileCurriculo.exists()){
+                fileCurriculo = new File(prof.getCod()+ ".zip");
+                if(!fileCurriculo.exists())
+                    downZipCurriculos = new Download(nomePrograma, prof.getCod());
 
-                unzip = new DescompactadorUnzip(prof.getCodEmString()+".zip", prof.getNome());
+                unzip = new DescompactadorUnzip(prof.getCod()+".zip", prof.getNome());
             }
         }   
     }
@@ -148,15 +124,19 @@ public class ProgramaPosGraduacao {
         
         for(Element entry : regexElements){
             
-            Regex regex = new Regex(XMLUtils.getStringAttribute(entry, "regex"), XMLUtils.getStringAttribute(entry, "class"), XMLUtils.getStringAttribute(entry, "type"));
+            Regex regex = new Regex(XMLUtils.getStringAttribute(entry, "regex").trim(), XMLUtils.getStringAttribute(entry, "class"), XMLUtils.getStringAttribute(entry, "type"));
+
             regexs.add(regex);
             
         }
+        
+        fileQualis.deleteOnExit();
     }
 
     private void carregaCurriculos() throws SAXException, IOException, ParserConfigurationException{
         
         for(Professor prof : professores){
+            System.out.println(prof.getNome().toUpperCase());
             CurriculoMining cm = new CurriculoMining("Curriculos\\"+ prof.getNome() +"\\curriculo.xml", anoInicio, anoFim, regexs);
             //cm.startMining("Curriculos\\"+ prof.getNome() +"\\curriculo.xml", regexs);
             
@@ -176,45 +156,62 @@ public class ProgramaPosGraduacao {
         }
     }
     
-    private void geraRelatorio() throws IOException{
+    public void geraRelatorio() throws IOException{
+        
+        String breakLine = System.getProperty("line.separator");
+        
+        int[] ttLinhaPesquisa = new int[27];
+        
+        int[] ttProgramaPos = new int[27];
         
         Relatorio relatorio = new Relatorio();
         
         for(LinhaPesquisa lnPesquisa : pesquisas){
             for(Professor prof : professores){
-                int ttArtA1 = 0;
-                int ttArtA2 = 0;
-                int ttArtB1 = 0;
-                int ttArtB2 = 0;
-                int ttArtB3 = 0;
-                int ttArtB4 = 0;
-                int ttArtC = 0;
-                int ttArtNC = 0;
-//                for(Artigo artigo : prof.getCurriculo().getArtigos()){
-//                    
-//                    if(artigo.getClassificacao().equals("A1"))
-//                        ++ttArtA1;
-//                    if(artigo.getClassificacao().equals("A2"))
-//                        ++ttArtA2;
-//                    if(artigo.getClassificacao().equals("B1"))
-//                        ++ttArtB1;
-//                    if(artigo.getClassificacao().equals("B2"))
-//                        ++ttArtB2;
-//                    if(artigo.getClassificacao().equals("B3"))
-//                        ++ttArtB3;
-//                    if(artigo.getClassificacao().equals("B4"))
-//                        ++ttArtB4;
-//                    if(artigo.getClassificacao().equals("C"))
-//                        ++ttArtC;
-//                    if(artigo.getClassificacao().equals("NC"))
-//                        ++ttArtNC;
-//                }
-                relatorio.escreve(prof.getNome()+"\t"+ttArtA1+"\t"+ttArtA2+"\t"+ttArtB1+"\t"+ttArtB2+"\t"+ttArtB3+"\t"+ttArtB4+"\t"+ttArtC+"\t"+ttArtNC);
-                
+                if(lnPesquisa.getNome().toLowerCase().equals(prof.getLinhaPesquisa().toLowerCase())){
+                    relatorio.escreve(prof.getNome()+"\t"+prof.getCurriculo().getTotalClassifRevista(0)+"\t"+prof.getCurriculo().getTotalClassifRevista(1)+"\t"+prof.getCurriculo().getTotalClassifRevista(2)+"\t"+prof.getCurriculo().getTotalClassifRevista(3)+"\t"+prof.getCurriculo().getTotalClassifRevista(4)+"\t"+prof.getCurriculo().getTotalClassifRevista(5)+"\t"+prof.getCurriculo().getTotalClassifRevista(6)+"\t"+prof.getCurriculo().getTotalClassifRevista(7)+"\t"+prof.getCurriculo().getTotalClassifRevista(8)
+                                  +"\t"+prof.getCurriculo().getTotalClassifEvento(0)+"\t"+prof.getCurriculo().getTotalClassifEvento(1)+"\t"+prof.getCurriculo().getTotalClassifEvento(2)+"\t"+prof.getCurriculo().getTotalClassifEvento(3)+"\t"+prof.getCurriculo().getTotalClassifEvento(4)+"\t"+prof.getCurriculo().getTotalClassifEvento(5)+"\t"+prof.getCurriculo().getTotalClassifEvento(6)+"\t"+prof.getCurriculo().getTotalClassifEvento(7)+"\t"+prof.getCurriculo().getTotalClassifEvento(8)
+                                  +"\t"+prof.getCurriculo().getBancasDoutorado()+"\t"+prof.getCurriculo().getBancasMestrado()+"\t"+prof.getCurriculo().getBancasPFGraduacao()
+                                  +"\t"+prof.getCurriculo().getOrientaDoutorado()+"\t"+prof.getCurriculo().getOrientaMestrado()+"\t"+prof.getCurriculo().getOrientaPFGraduacao()
+                                  +"\t"+prof.getCurriculo().getOrientaDrAndamento()+"\t"+prof.getCurriculo().getOrientaMestrAndamento()+"\t"+prof.getCurriculo().getOrientaPFGraduAndamento()+breakLine);
+
+                    for(int i = 0; i < 18; i++){
+                        if(i < 9)
+                            ttLinhaPesquisa[i] += prof.getCurriculo().getTotalClassifRevista(i);
+                        else
+                            ttLinhaPesquisa[i] += prof.getCurriculo().getTotalClassifEvento(i-9);
+                    }
+                        
+                    ttLinhaPesquisa[18] += prof.getCurriculo().getBancasDoutorado();
+                    ttLinhaPesquisa[19] += prof.getCurriculo().getBancasMestrado();
+                    ttLinhaPesquisa[20] += prof.getCurriculo().getBancasPFGraduacao();
+                    ttLinhaPesquisa[21] += prof.getCurriculo().getOrientaDoutorado();
+                    ttLinhaPesquisa[22] += prof.getCurriculo().getOrientaMestrado();
+                    ttLinhaPesquisa[23] += prof.getCurriculo().getOrientaPFGraduacao();
+                    ttLinhaPesquisa[24] += prof.getCurriculo().getOrientaDrAndamento();
+                    ttLinhaPesquisa[25] += prof.getCurriculo().getOrientaMestrAndamento();
+                    ttLinhaPesquisa[26] += prof.getCurriculo().getOrientaPFGraduAndamento();
+                    
+                }
             }
             
-            relatorio.escreve("Total da linha de pesquisa '"+lnPesquisa.getNome()+"'");
+            relatorio.escreve("Total da linha de pesquisa '"+lnPesquisa.getNome()+"'\t");
+            for(int i = 0; i < ttLinhaPesquisa.length; i++){
+                
+                relatorio.escreve(ttLinhaPesquisa[i]+"\t");
+                ttProgramaPos[i] += ttLinhaPesquisa[i];
+            }
+            relatorio.escreve(breakLine);
+            
+            
+            for(int i=0; i < ttLinhaPesquisa.length; i++)
+                ttLinhaPesquisa[i] = 0;
         }
+        
+        relatorio.escreve("Total Programa PosGraduação '"+nomePrograma+"'\t");
+        for(int i = 0; i < ttProgramaPos.length; i++)
+            relatorio.escreve(ttProgramaPos[i]+"\t");
+        
         
         relatorio.closeRelatorio();
     }

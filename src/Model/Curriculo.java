@@ -15,6 +15,9 @@ import java.util.List;
  */
 public class Curriculo {
     
+    private int[] artigosTotaisRevistas;
+    private int[] artigosTotaisEventos;
+    
     private List<Artigo> artigos;
     private int bancasDoutorado;
     private int bancasMestrado;
@@ -27,6 +30,7 @@ public class Curriculo {
     private int orientaPFGraduAndamento;
     
     public Curriculo(){
+        
         this.artigos = null;
         this.bancasDoutorado = 0;
         this.bancasMestrado = 0;
@@ -37,6 +41,82 @@ public class Curriculo {
         this.orientaDrAndamento = 0;
         this.orientaMestrAndamento = 0;
         this.orientaPFGraduAndamento =0;
+        
+        artigosTotaisEventos = new int[9];
+        artigosTotaisRevistas = new int[9];
+    }
+    
+    private void separaTotalEmClassificacao(){
+        
+        for(Artigo umArtigo : artigos){
+            if(umArtigo.getRevista()){
+                switch (umArtigo.getClassificacao()) {
+                    case "":
+
+                    case "A1":
+                        ++artigosTotaisRevistas[0];
+                        break;
+                    case "A2":
+                        ++artigosTotaisRevistas[1];
+                        break;
+                    case "B1":
+                        ++artigosTotaisRevistas[2];
+                        break;
+                    case "B2":
+                        ++artigosTotaisRevistas[3];
+                        break;
+                    case "B3":
+                        ++artigosTotaisRevistas[4];
+                        break;
+                    case "B4":
+                        ++artigosTotaisRevistas[5];
+                        break;
+                    case "B5":
+                        ++artigosTotaisRevistas[6];
+                        break;
+                    case "C":
+                        ++artigosTotaisRevistas[7];
+                        break;
+                    case "NC":
+                        ++artigosTotaisRevistas[8];
+                        break;
+                }
+            }else{
+                
+                switch (umArtigo.getClassificacao()) {
+                    case "":
+
+                    case "A1":
+                        ++artigosTotaisEventos[0];
+                        break;
+                    case "A2":
+                        ++artigosTotaisEventos[1];
+                        break;
+                    case "B1":
+                        ++artigosTotaisEventos[2];
+                        break;
+                    case "B2":
+                        ++artigosTotaisEventos[3];
+                        break;
+                    case "B3":
+                        ++artigosTotaisEventos[4];
+                        break;
+                    case "B4":
+                        ++artigosTotaisEventos[5];
+                        break;
+                    case "B5":
+                        ++artigosTotaisEventos[6];
+                        break;
+                    case "C":
+                        ++artigosTotaisEventos[7];
+                        break;
+                    case "NC":
+                        ++artigosTotaisEventos[8];
+                        break;
+                }
+            
+            }
+        }
     }
 
     public List<Artigo> getArtigos() {
@@ -45,10 +125,12 @@ public class Curriculo {
 
     public void setArtigos(List<Artigo> artigos) {
         if(this.artigos == null){
-            artigos = new ArrayList<>();
-            artigos.addAll(artigos);
-        }
-        this.artigos.addAll(artigos);
+            this.artigos = new ArrayList<>();
+            this.artigos.addAll(artigos);
+        }else
+            this.artigos.addAll(artigos);
+        
+        separaTotalEmClassificacao();
     }
 
     public int getBancasDoutorado() {
@@ -121,6 +203,16 @@ public class Curriculo {
 
     public void setOrientaPFGraduAndamento(int orientaPFGraduAndamento) {
         this.orientaPFGraduAndamento = orientaPFGraduAndamento;
+    }
+
+    public int getTotalClassifRevista(int i){
+        
+        return artigosTotaisRevistas[i];
+    }
+    
+    public int getTotalClassifEvento(int i){
+        
+        return artigosTotaisEventos[i];
     }
     
     

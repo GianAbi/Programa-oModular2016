@@ -64,6 +64,19 @@ public class XMLUtils {
         String value = element.getAttribute(name);
         return (value != null) ? value : "";
     }
+    
+    public static int getIntAttribute(Element element, String name){
+            
+        String value = element.getAttribute(name);
+
+        if (value == null)
+                return 0;
+
+        if (value.length() == 0)
+                return 0;
+
+        return Integer.parseInt(value);
+    }
 
     /**
      * Loads an optional integer attribute from a XML element
@@ -78,7 +91,7 @@ public class XMLUtils {
         if (value.length() == 0)
                 return 0;
 
-        return Long.parseLong(value);
+        return Long.parseLong(value, 10);
     }
     
     /**

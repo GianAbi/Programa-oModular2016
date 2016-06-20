@@ -14,13 +14,13 @@ public class Artigo {
     
     private String classificacao;
     private Boolean revista;
-    private Boolean conferencia;
+    private Boolean evento;
     private int ano;
     
     public Artigo(int ano){
-        this.classificacao = null;
+        this.classificacao = "";
         revista = false;
-        conferencia = false;
+        evento = false;
         this.ano = ano;
     }
 
@@ -33,11 +33,11 @@ public class Artigo {
     }
 
     public Boolean getConferencia() {
-        return conferencia;
+        return evento;
     }
 
     public void setConferencia(Boolean conferencia) {
-        this.conferencia = conferencia;
+        this.evento = conferencia;
     }
 
     public String getClassificacao() {

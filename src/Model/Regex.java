@@ -26,23 +26,11 @@ public class Regex {
         return regex;
     }
 
-    public void setRegex(String regex) {
-        this.regex = regex;
-    }
-
     public String getClassificacao() {
         return classificacao;
     }
-
-    public void setClassificacao(String classificacao) {
-        this.classificacao = classificacao;
-    }
-
+    
     public String getType() {
         return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 }

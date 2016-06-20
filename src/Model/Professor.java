@@ -17,53 +17,32 @@ import java.util.Vector;
 public class Professor {
     
     private String nome;
-    private long cod;
-    private Vector<String> linhasPesquisa;
+    private String cod;
+    private String linhasPesquisa;
     private Curriculo curriculo;    
 
-    public Professor(String nome, long cod){//, Curriculo curriculo, String instituicao, String graduacao, String formacao, List<Artigo> artigos) {
+    public Professor(String nome, String cod){//, Curriculo curriculo, String instituicao, String graduacao, String formacao, List<Artigo> artigos) {
         this.nome = nome;
         this.cod = cod;
         this.curriculo = null;
-        this.linhasPesquisa = null;
+        this.linhasPesquisa = "";
     }
     
     public String getNome() {
         return nome;
     }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
     
-    public String getCodEmString(){
-        return String.valueOf(cod);
-    }
-    
-    public long getCod() {
+    public String getCod() {
         return cod;
     }
-
-    public void setCod(int cod) {
-        this.cod = cod;
-    }
     
-    public Vector<String> getLinhasPesquisa() {
+    public String getLinhaPesquisa() {
         return linhasPesquisa;
     }
-    
-    public String getUmaLinhaPesquisa(int o){
-        
-        return linhasPesquisa.get(o);
-    }
 
-    public void addLinhaPesquisa(String linhaPesquisa) {
+    public void setLinhaPesquisa(String linhaPesquisa) {
         
-        if(linhasPesquisa == null){
-            linhasPesquisa = new Vector<>();
-            linhasPesquisa.add(linhaPesquisa);
-        }else
-            linhasPesquisa.add(linhaPesquisa);
+        linhasPesquisa=linhaPesquisa;
     }
 
     public Curriculo getCurriculo() {

@@ -20,15 +20,6 @@ import java.util.zip.ZipInputStream;
  */
 public class DescompactadorUnzip {
     
-//    public static void main (String args[]){
-//        
-//        String zipFilePath = "c:\\Users\\HP\\Downloads\\4284646.zip";
-//         
-//        String destDir = "c:\\Users\\HP\\Desktop\\output";
-//         
-//        DescompactadorUnzip unzip = new DescompactadorUnzip(zipFilePath, destDir);
-//    }
-    
     public DescompactadorUnzip(String zipFile, String folderProf) {
         
         File dir = new File("Curriculos"+ File.separator +folderProf);
@@ -46,7 +37,7 @@ public class DescompactadorUnzip {
                 String fileName = ze.getName();
                 File newFile = new File(dir.getPath() + File.separator + fileName);
                 
-                System.out.println("Unzipping to "+newFile.getAbsolutePath());
+                
                 //create directories for sub directories in zip
                 //new File(newFile.getPath()).mkdir();
                 
@@ -58,7 +49,6 @@ public class DescompactadorUnzip {
                 fos.close();
                 ze = zis.getNextEntry();
                 
-                //CurriculoMining curriculo = new CurriculoMining(destDir);// + File.separator + fileName);
             }
             //close last ZipEntry
             zis.closeEntry();

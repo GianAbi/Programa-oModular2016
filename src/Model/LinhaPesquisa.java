@@ -13,18 +13,24 @@ package Model;
 public class LinhaPesquisa {
     
     private String nome;
+    private String profNome;
      
      
     public LinhaPesquisa(String nome) {
         this.nome = nome;
+        this.profNome = "";
     }
 
     public String getNome() {
         return nome;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public String getProfNome() {
+        return profNome;
+    }
+    
+    public void setProfNome(String profNome){
+        this.profNome = profNome;
     }
     
 }

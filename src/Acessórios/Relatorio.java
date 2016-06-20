@@ -33,7 +33,7 @@ public class Relatorio {
     public void escreve(String toBeWritten) throws IOException{
         
         br.write(toBeWritten);
-        br.write("\n");
+//        br.write("\n");
     }
    
     public void closeRelatorio() throws IOException{

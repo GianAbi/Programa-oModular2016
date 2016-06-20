@@ -29,6 +29,7 @@ public class Start {
         
         long start = System.currentTimeMillis();
         ProgramaPosGraduacao ppg = new ProgramaPosGraduacao(args[0], args[1], args[2]);
+        ppg.geraRelatorio();
         long end = System.currentTimeMillis();
         
         System.out.println((end-start)/1000 + "seg");
