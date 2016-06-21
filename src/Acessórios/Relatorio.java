@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Acessórios;
+package acessórios;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,7 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- *
+ *  Classe acessório responsável pro criar o arquivo de relatório e escrever nele
  * @author Rafael
  */
 public class Relatorio {

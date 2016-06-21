@@ -1,4 +1,4 @@
-package Acessórios;
+package acessórios;
 
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
@@ -15,7 +15,8 @@ import java.net.URL;
  */
 
 /**
- *
+ *  Classe acessório responsável pelo downLoad de arquivos da web
+ * Possui dois tipos de contrutores que referenciam as duas possíveis maneiras de download para o Prgrama.
  * @author Rafael
  */
 public class Download {
@@ -32,7 +33,7 @@ public class Download {
         try{
             this.oURL = oURL;
             
-            httpConn = (HttpURLConnection) this.oURL.openConnection();                
+            httpConn = (HttpURLConnection) this.oURL.openConnection();        //abre uma conexão http na web.        
 
             if(httpConn.getResponseCode() == HttpURLConnection.HTTP_OK){
 

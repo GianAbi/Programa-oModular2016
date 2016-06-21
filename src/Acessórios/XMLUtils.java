@@ -1,9 +1,7 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * 
  */
-package Acessórios;
+package acessórios;
 
 
 import java.util.ArrayList;
@@ -12,16 +10,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
- *
+ *  Classe acessório para resgatar informações de atributos e elementos no xml.
  * @author Rafael
  */
 public class XMLUtils {
     
     /**
-	 * Returns a list of elements having a given tag
-     * @param element
-     * @param tagName
-     * @return 
+	Retorna uma lista de elementos com um determinado nome no xml
 	 */
     public static List<Element> getElements(Element element, String tagName){
         
@@ -40,6 +35,7 @@ public class XMLUtils {
         return elements;
     }
     
+    // retorna uma elemento imediato de um elemento pai.
     public static Element getSingleElement(Element element, String tagName){
             
         Node node = element.getFirstChild();
@@ -57,7 +53,7 @@ public class XMLUtils {
     }
 
     /**
-     * Loads an optional string attribute from a XML element
+    * Retorna um atributo em String de um elemento.
      */
     public static String getStringAttribute(Element element, String name){
             
@@ -65,6 +61,8 @@ public class XMLUtils {
         return (value != null) ? value : "";
     }
     
+    
+//    retorna um atributo em Inteiro de uma elemento.
     public static int getIntAttribute(Element element, String name){
             
         String value = element.getAttribute(name);
@@ -76,45 +74,5 @@ public class XMLUtils {
                 return 0;
 
         return Integer.parseInt(value);
-    }
-
-    /**
-     * Loads an optional integer attribute from a XML element
-     */
-    public static long getLongAttribute(Element element, String name){
-            
-        String value = element.getAttribute(name);
-
-        if (value == null)
-                return 0;
-
-        if (value.length() == 0)
-                return 0;
-
-        return Long.parseLong(value, 10);
-    }
-    
-    /**
-     * Loads an optional Boolean element value from a XML element
-     */
-    public static boolean getBooleanNode(Element element, String name, boolean _default){
-            
-        Element child = getSingleElement(element, name);
-
-        if (child == null)
-                return _default;
-
-        String value = child.getTextContent();
-
-        if (value == null)
-                return _default;
-
-        if (value.compareTo("S") == 0)
-                return true;
-
-        if (value.compareTo("N") == 0)
-                return false;
-
-        return _default;
     }
 }

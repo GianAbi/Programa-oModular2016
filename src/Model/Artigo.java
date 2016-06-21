@@ -1,42 +1,40 @@
-package Model;
+package model;
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+
  */
 
 /**
- *
+ *    Classe destinada a representar as informações de um artigo.
  * @author Rafael
  */
 public class Artigo {
     
     private String classificacao;
-    private Boolean revista;
-    private Boolean evento;
+    private String revista;
+    private String evento;
     private int ano;
     
     public Artigo(int ano){
         this.classificacao = "";
-        revista = false;
-        evento = false;
+        revista = "";
+        evento = "";
         this.ano = ano;
     }
 
-    public Boolean getRevista() {
+    public String getRevista() {
         return revista;
     }
 
-    public void setRevista(Boolean revista) {
+    public void setRevista(String revista) {
         this.revista = revista;
     }
 
-    public Boolean getConferencia() {
+    public String getEvento() {
         return evento;
     }
 
-    public void setConferencia(Boolean conferencia) {
+    public void setEvento(String conferencia) {
         this.evento = conferencia;
     }
 

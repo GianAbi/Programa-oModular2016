@@ -1,4 +1,4 @@
-package Acessórios;
+package acessórios;
 
 
 import java.io.File;
@@ -15,7 +15,8 @@ import java.util.zip.ZipInputStream;
  */
 
 /**
- *
+ *  Classe acessório responsável por descompactar os arquivos .zip baixados do contents.xml
+ *  Programa deleção dos arquivos .zip ao final da execução do programa.
  * @author Rafael
  */
 public class DescompactadorUnzip {
@@ -25,7 +26,7 @@ public class DescompactadorUnzip {
         File dir = new File("Curriculos"+ File.separator +folderProf);
         
         if(!dir.exists())
-            dir.mkdirs();
+            dir.mkdirs();   // controi diretórios caso necessário.
         
         byte[] buffer = new byte[2048];
         try {
@@ -42,7 +43,7 @@ public class DescompactadorUnzip {
                 //new File(newFile.getPath()).mkdir();
                 
                 FileOutputStream fos = new FileOutputStream(newFile);
-                int len;
+                int len;                // inicia escrita do .xml exportado.
                 while ((len = zis.read(buffer)) > 0) {
                     fos.write(buffer, 0, len);
                 }
@@ -55,9 +56,9 @@ public class DescompactadorUnzip {
             zis.close();
             
             File file = new File(zipFile);
-            file.deleteOnExit();
+            file.deleteOnExit(); // programa deleção ao final da execução
         } catch (IOException e) {
-            System.err.println("Erro ao descompactar arquivo: " + zipFile);
+            System.err.println("Erro ao descompactar arquivo: " + zipFile); // mostra erro ao descompactar.
         }
          
     }

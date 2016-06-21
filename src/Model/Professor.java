@@ -1,17 +1,15 @@
-package Model;
+package model;
 
 
 import java.util.List;
 import java.util.Vector;
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+
  */
 
 /**
- *
+ *Classe destinada a representar as informações de um professor.
  * @author Rafael
  */
 public class Professor {
@@ -21,7 +19,7 @@ public class Professor {
     private String linhasPesquisa;
     private Curriculo curriculo;    
 
-    public Professor(String nome, String cod){//, Curriculo curriculo, String instituicao, String graduacao, String formacao, List<Artigo> artigos) {
+    public Professor(String nome, String cod){
         this.nome = nome;
         this.cod = cod;
         this.curriculo = null;

@@ -1,16 +1,14 @@
-package Model;
+package model;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+
  */
 
 /**
- *
+ *Classe destinada a representar as informações de um curriculo de professor.
  * @author Rafael
  */
 public class Curriculo {
@@ -46,76 +44,81 @@ public class Curriculo {
         artigosTotaisRevistas = new int[9];
     }
     
+    //        Separa os totais de arquivos de acordo com suas respectivas classificações e seus grupos (Revista ou Conferencia)
     private void separaTotalEmClassificacao(){
         
         for(Artigo umArtigo : artigos){
-            if(umArtigo.getRevista()){
-                switch (umArtigo.getClassificacao()) {
-                    case "":
+            if(!umArtigo.getClassificacao().equals(""))
+                if(umArtigo.getRevista().equals("Sim")){
+                    
+                    switch (umArtigo.getClassificacao()) {
+                        case "":
+                            
+                            break;
+                        case "A1":
+                            ++artigosTotaisRevistas[0];
+                            break;
+                        case "A2":
+                            ++artigosTotaisRevistas[1];
+                            break;
+                        case "B1":
+                            ++artigosTotaisRevistas[2];
+                            break;
+                        case "B2":
+                            ++artigosTotaisRevistas[3];
+                            break;
+                        case "B3":
+                            ++artigosTotaisRevistas[4];
+                            break;
+                        case "B4":
+                            ++artigosTotaisRevistas[5];
+                            break;
+                        case "B5":
+                            ++artigosTotaisRevistas[6];
+                            break;
+                        case "C":
+                            ++artigosTotaisRevistas[7];
+                            break;
+                        case "NC":
+                            ++artigosTotaisRevistas[8];
+                            break;
+                    }
+                }else if(umArtigo.getEvento().equals("Sim")){
 
-                    case "A1":
-                        ++artigosTotaisRevistas[0];
-                        break;
-                    case "A2":
-                        ++artigosTotaisRevistas[1];
-                        break;
-                    case "B1":
-                        ++artigosTotaisRevistas[2];
-                        break;
-                    case "B2":
-                        ++artigosTotaisRevistas[3];
-                        break;
-                    case "B3":
-                        ++artigosTotaisRevistas[4];
-                        break;
-                    case "B4":
-                        ++artigosTotaisRevistas[5];
-                        break;
-                    case "B5":
-                        ++artigosTotaisRevistas[6];
-                        break;
-                    case "C":
-                        ++artigosTotaisRevistas[7];
-                        break;
-                    case "NC":
-                        ++artigosTotaisRevistas[8];
-                        break;
-                }
-            }else{
-                
-                switch (umArtigo.getClassificacao()) {
-                    case "":
+                    switch (umArtigo.getClassificacao()) {
+                        case "":
+                            ++artigosTotaisEventos[8];
+                            break;
+                        case "A1":
+                            ++artigosTotaisEventos[0];
+                            break;
+                        case "A2":
+                            ++artigosTotaisEventos[1];
+                            break;
+                        case "B1":
+                            ++artigosTotaisEventos[2];
+                            break;
+                        case "B2":
+                            ++artigosTotaisEventos[3];
+                            break;
+                        case "B3":
+                            ++artigosTotaisEventos[4];
+                            break;
+                        case "B4":
+                            ++artigosTotaisEventos[5];
+                            break;
+                        case "B5":
+                            ++artigosTotaisEventos[6];
+                            break;
+                        case "C":
+                            ++artigosTotaisEventos[7];
+                            break;
+                        case "NC":
+                            ++artigosTotaisEventos[8];
+                            break;
+                    }
 
-                    case "A1":
-                        ++artigosTotaisEventos[0];
-                        break;
-                    case "A2":
-                        ++artigosTotaisEventos[1];
-                        break;
-                    case "B1":
-                        ++artigosTotaisEventos[2];
-                        break;
-                    case "B2":
-                        ++artigosTotaisEventos[3];
-                        break;
-                    case "B3":
-                        ++artigosTotaisEventos[4];
-                        break;
-                    case "B4":
-                        ++artigosTotaisEventos[5];
-                        break;
-                    case "B5":
-                        ++artigosTotaisEventos[6];
-                        break;
-                    case "C":
-                        ++artigosTotaisEventos[7];
-                        break;
-                    case "NC":
-                        ++artigosTotaisEventos[8];
-                        break;
                 }
-            
-            }
         }
     }
 

@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Acessórios;
+package acessórios;
 
-import Model.Artigo;
-import Model.Regex;
+import model.Artigo;
+import model.Regex;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,7 +18,8 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 /**
- *
+ *  Classe responsável por fazer a "mineração" dos dados no arquivo de curriculo do professor em .xml.
+ * Contém os nomes dos elementos e atributos a serem capturados para a execução do programa.
  * @author Rafael
  */
 public class CurriculoMining {
@@ -57,7 +58,7 @@ public class CurriculoMining {
         orientaMestrAndamento = new ArrayList<>();
         orientaPFGraduAndamento = new ArrayList<>();
         
-        artigos = getArtigosXML();
+        artigos = getArtigosXML();  
         bancasDoutorado = getBancasDoutoradoXML();
         bancasMestrado = getBancasMestradoXML();
         bancasPFGraduacao = getBancasPFGraduacaoXML();
@@ -69,51 +70,51 @@ public class CurriculoMining {
         orientaPFGraduAndamento = getOrientaPFGraduAndamentoXML();
         
     }
-    
+                            // captura elementos no curriculo em .xml de Orientação Projeto Final de Graduação em Andamento
     private List<Element> getOrientaPFGraduAndamentoXML() throws IOException, SAXException, ParserConfigurationException{
         
         List<Element> trashOrientacao = new ArrayList<>();
                                                                             
-        List<Element> orientacoes = ElementXML.getElementXML(data, "OUTRAS-ORIENTACOES-EM-ANDAMENTO");
+        List<Element> orientacoes = ElementXML.getElementXML(data, "OUTRAS-ORIENTACOES-EM-ANDAMENTO"); // nome do elemento para Orientação de projeto final de graduação em andamento.
         
         for(Element orientacao : orientacoes){
             
-            Element dadosBasicos = XMLUtils.getSingleElement(orientacao, "DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-EM-ANDAMENTO");
-            int anoPublic = XMLUtils.getIntAttribute(dadosBasicos, "ANO");
+            Element dadosBasicos = XMLUtils.getSingleElement(orientacao, "DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-EM-ANDAMENTO"); // nome do elemento que contém o ano.
+            int anoPublic = XMLUtils.getIntAttribute(dadosBasicos, "ANO");  //nome do atributo para ano
             
             if(!(anoPublic >= anoIni && anoPublic <= anoFim)){
-                trashOrientacao.add(orientacao);
+                trashOrientacao.add(orientacao);  // se não estiver entre os anos informados como parâmetros para o programa, ignora
                 continue;
             }
             
-            String natureza = XMLUtils.getStringAttribute(dadosBasicos, "NATUREZA");
-            if(!natureza.equals("TRABALHO_DE_CONCLUSAO_DE_CURSO_GRADUACAO")){
+            String natureza = XMLUtils.getStringAttribute(dadosBasicos, "NATUREZA");  // nome do elemento que contém o nome do trabalho.
+            if(!natureza.equals("TRABALHO_DE_CONCLUSAO_DE_CURSO_GRADUACAO")){   //nome do atributo para nome do trabalho
                 trashOrientacao.add(orientacao);
             }
         }
         for(Element trash : trashOrientacao)
-            orientacoes.remove(trash);
+            orientacoes.remove(trash);   // apaga as orientação que não tem os requisitos
                  
         return orientacoes;
     }
-    
+                            // captura elementos no curriculo em .xml de Orientação Mestrado em Andamento
     private List<Element> getOrientaMestrAndamentoXML() throws IOException, SAXException, ParserConfigurationException{
         
         List<Element> trashOrientacao = new ArrayList<>();
                                                                             
-        List<Element> orientacoes = ElementXML.getElementXML(data, "ORIENTACAO-EM-ANDAMENTO-DE-MESTRADO");
+        List<Element> orientacoes = ElementXML.getElementXML(data, "ORIENTACAO-EM-ANDAMENTO-DE-MESTRADO");   // nome do elemento para Orientação de mestrado em andamento.
         
         for(Element orientacao : orientacoes){
             
-            Element dadosBasicos = XMLUtils.getSingleElement(orientacao, "DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-MESTRADO");
-            int anoPublic = XMLUtils.getIntAttribute(dadosBasicos, "ANO");
+            Element dadosBasicos = XMLUtils.getSingleElement(orientacao, "DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-MESTRADO");   // nome do elemento que contém o ano.
+            int anoPublic = XMLUtils.getIntAttribute(dadosBasicos, "ANO");   //nome do atributo para ano
             
             if(!(anoPublic >= anoIni && anoPublic <= anoFim)){
                 trashOrientacao.add(orientacao);
             }
         }
         for(Element trash : trashOrientacao)
-            orientacoes.remove(trash);
+            orientacoes.remove(trash); // apaga as orientação que não tem os requisitos
                  
         return orientacoes;
     }
@@ -122,19 +123,19 @@ public class CurriculoMining {
         
         List<Element> trashOrientacao = new ArrayList<>();
                                                                             
-        List<Element> orientacoes = ElementXML.getElementXML(data, "ORIENTACAO-EM-ANDAMENTO-DE-DOUTORADO");
+        List<Element> orientacoes = ElementXML.getElementXML(data, "ORIENTACAO-EM-ANDAMENTO-DE-DOUTORADO");   // nome do elemento para Orientação de doutorado em andamento.
         
         for(Element orientacao : orientacoes){
             
-            Element dadosBasicos = XMLUtils.getSingleElement(orientacao, "DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-DOUTORADO");
-            int anoPublic = XMLUtils.getIntAttribute(dadosBasicos, "ANO");
+            Element dadosBasicos = XMLUtils.getSingleElement(orientacao, "DADOS-BASICOS-DA-ORIENTACAO-EM-ANDAMENTO-DE-DOUTORADO");   // nome do elemento que contém o ano.
+            int anoPublic = XMLUtils.getIntAttribute(dadosBasicos, "ANO");   //nome do atributo para ano
             
             if(!(anoPublic >= anoIni && anoPublic <= anoFim)){
-                trashOrientacao.add(orientacao);
+                trashOrientacao.add(orientacao);   
             }
         }
         for(Element trash : trashOrientacao)
-            orientacoes.remove(trash);
+            orientacoes.remove(trash);   // apaga as orientação que não tem os requisitos
                  
         return orientacoes;
     }
@@ -143,26 +144,26 @@ public class CurriculoMining {
         
         List<Element> trashOrientacao = new ArrayList<>();
                                                                             
-        List<Element> orientacoes = ElementXML.getElementXML(data, "OUTRAS-ORIENTACOES-CONCLUIDAS");
+        List<Element> orientacoes = ElementXML.getElementXML(data, "OUTRAS-ORIENTACOES-CONCLUIDAS");      // nome do elemento para Orientação concluida.
         
         for(Element orientacao : orientacoes){
             
-            Element dadosBasicos = XMLUtils.getSingleElement(orientacao, "DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS");
-            int anoPublic = XMLUtils.getIntAttribute(dadosBasicos, "ANO");
+            Element dadosBasicos = XMLUtils.getSingleElement(orientacao, "DADOS-BASICOS-DE-OUTRAS-ORIENTACOES-CONCLUIDAS");   // nome do elemento que contém o ano.
+            int anoPublic = XMLUtils.getIntAttribute(dadosBasicos, "ANO");      //nome do atributo para ano
             
             if(!(anoPublic >= anoIni && anoPublic <= anoFim)){
-                trashOrientacao.add(orientacao);
+                trashOrientacao.add(orientacao);  
                 continue;
             }
             
-            String natureza = XMLUtils.getStringAttribute(dadosBasicos, "NATUREZA");
+            String natureza = XMLUtils.getStringAttribute(dadosBasicos, "NATUREZA");     // nome do elemento que contém o nome do trabalho.
             
-            if(!natureza.equals("TRABALHO_DE_CONCLUSAO_DE_CURSO_GRADUACAO")){
+            if(!natureza.equals("TRABALHO_DE_CONCLUSAO_DE_CURSO_GRADUACAO")){     //nome do atributo para nome do trabalho
                 trashOrientacao.add(orientacao);
             }
         }
         for(Element trash : trashOrientacao)
-            orientacoes.remove(trash);
+            orientacoes.remove(trash);    // apaga as orientação que não tem os requisitos
                  
         return orientacoes;
     }
@@ -171,12 +172,12 @@ public class CurriculoMining {
         
         List<Element> trashOrientacao = new ArrayList<>();
                                                                             
-        List<Element> orientacoes = ElementXML.getElementXML(data, "ORIENTACOES-CONCLUIDAS-PARA-MESTRADO");
+        List<Element> orientacoes = ElementXML.getElementXML(data, "ORIENTACOES-CONCLUIDAS-PARA-MESTRADO");    // nome do elemento para Orientação concluida.
         
         for(Element orientacao : orientacoes){
             
-            Element dadosBasicos = XMLUtils.getSingleElement(orientacao, "DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-MESTRADO");
-            int anoPublic = XMLUtils.getIntAttribute(dadosBasicos, "ANO");
+            Element dadosBasicos = XMLUtils.getSingleElement(orientacao, "DADOS-BASICOS-DE-ORIENTACOES-CONCLUIDAS-PARA-MESTRADO");     //// nome do elemento que contém o ano.
+            int anoPublic = XMLUtils.getIntAttribute(dadosBasicos, "ANO");      //nome do atributo para ano
             
             if(!(anoPublic >= anoIni && anoPublic <= anoFim))
                 trashOrientacao.add(orientacao);          
@@ -184,13 +185,13 @@ public class CurriculoMining {
         for(Element trash : trashOrientacao)
             orientacoes.remove(trash);
                  
-        return orientacoes;
+        return orientacoes;        // apaga as orientação que não tem os requisitos
     }
     
     private List<Element> getOrientaDoutoradoXML() throws IOException, SAXException, ParserConfigurationException{
         
         List<Element> trashOrientacao = new ArrayList<>();
-                                                                            // VERIFICAR STRING NUM CURRICULO QUE TENHO ORIENTACAO PARA DOUTORADO
+                                                                            
         List<Element> orientacoes = ElementXML.getElementXML(data, "ORIENTACOES-CONCLUIDAS-PARA-DOUTORADO");
         
         for(Element orientacao : orientacoes){                                                // VERIFICAR STRING NUM CURRICULO QUE TENHO ORIENTACAO PARA DOUTORADO
@@ -297,6 +298,35 @@ public class CurriculoMining {
             artigosXML.add(artigo);
         }
         
+        List<Element> trabalhosEmEventos = ElementXML.getElementXML(data, "TRABALHO-EM-EVENTOS");
+        
+        for(Element umTrabalho : trabalhosEmEventos){
+            
+            Element dadosBasicos = XMLUtils.getSingleElement(umTrabalho, "DADOS-BASICOS-DO-TRABALHO");
+            int anoPublic = XMLUtils.getIntAttribute(dadosBasicos, "ANO-DO-TRABALHO");
+            
+            if(! (anoPublic >= anoIni && anoPublic <= anoFim)){
+                continue;
+            }
+            
+            String natureza = XMLUtils.getStringAttribute(dadosBasicos, "NATUREZA");
+            
+            if(!natureza.equals("COMPLETO"))
+                continue;
+            
+            Element detalhamento = XMLUtils.getSingleElement(umTrabalho, "DETALHAMENTO-DO-TRABALHO");
+            String publicacao = XMLUtils.getStringAttribute(detalhamento, "TITULO-DOS-ANAIS-OU-PROCEEDINGS");
+            
+            Artigo artigo = new Artigo(anoPublic);
+            
+            classificaArtigo(publicacao, artigo);
+            
+            if(artigo.getClassificacao().equals(""))
+                System.out.println(("Titulo de periodico/revista não encontrado: " + publicacao).toUpperCase());
+            
+            artigosXML.add(artigo);
+        }
+        
         return artigosXML;
     }
     
@@ -306,13 +336,12 @@ public class CurriculoMining {
             
             if(publicacao.trim().toLowerCase().matches(".*"+regex.getRegex().toLowerCase()+".*")){
                 artigo.setClassificacao(regex.getClassificacao());
+                if(regex.getType().equals("Periódico"))
+                    artigo.setRevista("Sim");
                 if(regex.getType().equals("Conferência"))
-                    artigo.setConferencia(true);
-                else
-                    artigo.setRevista(true);
-            
+                    artigo.setEvento("Sim");
+                               
                 break;
-            }else{ 
             }
         }
     }

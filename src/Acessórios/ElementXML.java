@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Acessórios;
+package acessórios;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +19,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- *
+ *  Classe acessório para leitura de uma .xml, inicializando um Document, normalizando e retornando uma lista de elements identificados
+ * pelo tag, contido no arquivo .xml
  * @author Rafael
  */
 public class ElementXML {
